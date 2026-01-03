@@ -1,0 +1,80 @@
+import math
+import matplotlib.pyplot as plt
+
+# Differential equation
+def f(x, y):
+    return 3 * math.exp(2 * x) * y
+
+# Exact solution
+def exact_solution(x, y0, x0):
+    return y0 * math.exp(1.5 * (math.exp(2*x) - math.exp(2*x0)))
+
+# Euler Method
+def euler_method(x0, y0, h, n):
+    xs, ys = [x0], [y0]
+    for _ in range(n):
+        y0 += h * f(x0, y0)
+        x0 += h
+        xs.append(x0)
+        ys.append(y0)
+    return xs, ys
+
+# Taylor Method (2nd order)
+def taylor_method(x0, y0, h, n):
+    xs, ys = [x0], [y0]
+    for _ in range(n):
+        f1 = f(x0, y0)
+        df_dx = 6 * math.exp(2 * x0) * y0 + 9 * math.exp(4 * x0) * y0
+        y0 += h * f1 + (h**2 / 2) * df_dx
+        x0 += h
+        xs.append(x0)
+        ys.append(y0)
+    return xs, ys
+
+# Runge-Kutta 6th Order
+def rk6_method(x0, y0, h, n):
+    xs, ys = [x0], [y0]
+    for _ in range(n):
+        k1 = f(x0, y0)
+        k2 = f(x0 + h/4, y0 + h*k1/4)
+        k3 = f(x0 + h/4, y0 + h*(k1 + k2)/8)
+        k4 = f(x0 + h/2, y0 + h*(-k2 + 2*k3)/2)
+        k5 = f(x0 + 3*h/4, y0 + h*(3*k1 + 9*k4)/16)
+        k6 = f(x0 + h, y0 + h*(-3*k1 + 2*k2 + 12*k3 - 12*k4 + 8*k5)/7)
+        y0 += h * (7*k1 + 32*k3 + 12*k4 + 32*k5 + 7*k6) / 90
+        x0 += h
+        xs.append(x0)
+        ys.append(y0)
+    return xs, ys
+
+# Parameters
+x0 = 0
+y0 = 0.5
+h = 0.05
+n = 10
+
+# Compute values
+x_vals, y_euler = euler_method(x0, y0, h, n)
+_, y_taylor = taylor_method(x0, y0, h, n)
+_, y_rk6 = rk6_method(x0, y0, h, n)
+y_exact = [exact_solution(x, y0, x0) for x in x_vals]
+
+# Print table
+print(f"{'x':>6} | {'Euler':>10} | {'Taylor':>10} | {'RK6':>10} | {'Exact':>10}")
+print("-" * 60)
+for i in range(len(x_vals)):
+    print(f"{x_vals[i]:6.2f} | {y_euler[i]:10.6f} | {y_taylor[i]:10.6f} | {y_rk6[i]:10.6f} | {y_exact[i]:10.6f}")
+
+# Plot
+plt.plot(x_vals, y_euler, 'o--', label='Euler')
+plt.plot(x_vals, y_taylor, 's--', label='Taylor (2nd)')
+plt.plot(x_vals, y_rk6, 'd--', label='Runge-Kutta 6th')
+plt.plot(x_vals, y_exact, 'k-', label='Exact', linewidth=2)
+
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Solution of dy/dx = 3e^{2x} y')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
