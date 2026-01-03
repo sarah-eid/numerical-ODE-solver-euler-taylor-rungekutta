@@ -17,6 +17,12 @@ Numerical-ODE-Solver/
 │   └── FinalNum_1.py          # y(0)=0.5, x=0→0.5, concise version
 ├── report/
 │   └── FinalProjectNum.pdf    # Complete project report
+├── figures/                    # Generated plots and visualizations
+│   ├── euler_comparison.png
+│   ├── taylor_comparison.png
+│   ├── rk6_comparison.png
+│   ├── all_methods_comparison.png
+│   └── summary_plot.png   
 └── README.md                  # This file
 ```
 
